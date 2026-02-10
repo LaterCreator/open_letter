@@ -1,24 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PDF Comments</title>
+  <title>PDF Viewer with Comments</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>My PDF</h1>
+  <h1>My PDF</h1>
+  <iframe src="sym.png" width="100%" height="600"></iframe>
 
-<iframe src="sym.png" width="100%" height="600"></iframe>
+  <section id="commentsSection">
+    <h2>Comments</h2>
 
-<h2>Comments</h2>
+    <!-- New top-level comment input -->
+    <div id="newComment">
+      <textarea id="commentInput" rows="3" placeholder="Add a public comment..."></textarea><br>
+      <button id="submitComment">Post</button>
+    </div>
 
-<textarea id="commentInput"></textarea><br>
-<button id="submitComment">Post</button>
+    <!-- Comment list -->
+    <div id="commentsList"></div>
+  </section>
 
-<div id="commentsList"></div>
-
-<!-- THIS LINE IS CRITICAL -->
-<script type="module" src="script.js"></script>
-
+  <!-- Firebase & our script -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
