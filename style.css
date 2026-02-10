@@ -1,52 +1,122 @@
-/* Basic body styling */
+/* General body */
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
+  background: #f5f5f5;
+  color: #202124;
 }
 
-/* Comment section container */
+/* PDF iframe */
+iframe {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Comments section */
+#commentsSection {
+  margin-top: 30px;
+}
+
+/* New comment input */
+#newComment textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+#newComment button {
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #065fd4;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#newComment button:hover {
+  background-color: #0a78ff;
+}
+
+/* Comment container */
 #commentsList {
   margin-top: 20px;
 }
 
-/* Each comment */
-#commentsList div {
-  background: #f9f9f9;
+/* Each comment box */
+.comment {
+  background: white;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
-  transition: background 0.2s;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-#commentsList div:hover {
-  background: #f1f1f1;
+.comment:hover {
+  background: #f9f9f9;
 }
 
 /* Comment text */
-#commentsList p {
+.comment-text {
   margin: 0 0 5px 0;
+  line-height: 1.4;
 }
 
-/* Buttons */
-#commentsList button {
-  cursor: pointer;
+/* Reply button */
+.comment button {
   background: none;
   border: none;
   color: #065fd4;
-  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
   padding: 0;
+  margin-top: 5px;
 }
 
-#commentsList button:hover {
+.comment button:hover {
   text-decoration: underline;
 }
 
-/* Reply textarea */
-#commentsList textarea {
-  width: 100%;
-  resize: vertical;
-  margin-bottom: 5px;
-  padding: 5px;
-  font-family: inherit;
+/* Reply box */
+.reply-box {
+  display: none;
+  margin-top: 5px;
 }
+
+.reply-box textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.reply-box button {
+  margin-top: 3px;
+  padding: 5px 10px;
+  background-color: #065fd4;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.reply-box button:hover {
+  background-color: #0a78ff;
+}
+
+/* Indented replies */
+.comment .reply {
+  margin-left: 20px;
+  border-left: 2px solid #eee;
+  padding-left: 10px;
+}
+
 
