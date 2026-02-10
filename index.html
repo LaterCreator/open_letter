@@ -2,28 +2,106 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PDF Viewer with Comments</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Comments</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Basic styling for the comment section */
+    #commentForm {
+      margin-bottom: 20px;
+    }
+
+    #usernameInput, #commentInput {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 5px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    #submitComment {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #submitComment:hover {
+      background-color: #0056b3;
+    }
+
+    .comment {
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comment .comment-text {
+      display: inline;
+    }
+
+    .comment .timestamp {
+      display: inline;
+      margin-left: 10px;
+      color: #666;
+      font-size: 0.8em;
+    }
+
+    .reply {
+      margin-left: 20px;
+      border-left: 2px solid #eee;
+      padding-left: 10px;
+    }
+
+    .reply-box {
+      margin-top: 5px;
+    }
+
+    .reply-box textarea {
+      width: 100%;
+      resize: vertical;
+      padding: 5px;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .reply-box button {
+      padding: 4px 8px;
+      font-size: 13px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+    }
+
+    .reply-box button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>My PDF</h1>
-  <iframe src="sym.png" width="100%" height="600"></iframe>
+  <h1>PDF Comment Section</h1>
 
-  <section id="commentsSection">
-    <h2>Comments</h2>
+  <!-- Username + Comment Form -->
+  <div id="commentForm">
+    <input type="text" id="usernameInput" placeholder="Username (optional)">
+    <textarea id="commentInput" placeholder="Add a public comment..."></textarea>
+    <button id="submitComment">Post Comment</button>
+  </div>
 
-    <!-- New top-level comment input -->
-    <div id="newComment">
-      <textarea id="commentInput" rows="3" placeholder="Add a public comment..."></textarea><br>
-      <button id="submitComment">Post</button>
-    </div>
+  <!-- Container for comments -->
+  <div id="commentsList">Loading comments...</div>
 
-    <!-- Comment list -->
-    <div id="commentsList"></div>
-  </section>
+  <!-- PDF Viewer (optional) -->
+  <iframe src="yourfile.pdf" style="width:100%; height:600px;" frameborder="0"></iframe>
 
-  <!-- Firebase & our script -->
+  <!-- JS -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
