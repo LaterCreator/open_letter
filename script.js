@@ -29,6 +29,10 @@ document.getElementById("submitComment").onclick = async () => {
   const text = input.value.trim();
   if (!text) return;
 
+  // 1️⃣ Render instantly
+  renderTemporaryComment(text, null);
+
+  // 2️⃣ Send to Firestore
   await addDoc(commentsRef, {
     text,
     parentId: null,
@@ -38,6 +42,31 @@ document.getElementById("submitComment").onclick = async () => {
   input.value = "";
 };
 
+// Render temporary comment
+function renderTemporaryComment(text, parentId) {
+  const div = document.createElement("div");
+  div.classList.add("comment");
+  if (parentId) div.classList.add("reply");
+
+  const p = document.createElement("p");
+  p.classList.add("comment-text");
+  p.textContent = text;
+
+  div.appendChild(p);
+
+  // Insert it in the right place
+  if (parentId) {
+    // Find parent comment div
+    const allComments = document.querySelectorAll(".comment");
+    allComments.forEach(c => {
+      if (c.dataset.id === parentId) {
+        c.appendChild(div);
+      }
+    });
+  } else {
+    document.getElementById("commentsList").appendChild(div);
+  }
+}
 // Listen for comments
 const q = query(commentsRef, orderBy("createdAt", "asc"));
 
@@ -110,19 +139,24 @@ function createCommentElement(comment) {
   };
 
   // Submit reply
-  submitReply.onclick = async () => {
-    const replyText = replyInput.value.trim();
-    if (!replyText) return;
+ submitReply.onclick = async () => {
+  const replyText = replyInput.value.trim();
+  if (!replyText) return;
 
-    await addDoc(commentsRef, {
-      text: replyText,
-      parentId: comment.id, // links reply to parent comment
-      createdAt: Date.now()
-    });
+  // 1️⃣ Render instantly
+  renderTemporaryComment(replyText, comment.id);
 
-    replyInput.value = "";
-    replyBox.style.display = "none";
-  };
+  // 2️⃣ Send to Firestore
+  await addDoc(commentsRef, {
+    text: replyText,
+    parentId: comment.id,
+    createdAt: Date.now()
+  });
+
+  replyInput.value = "";
+  replyBox.style.display = "none";
+};
+
 
   // Assemble
   div.appendChild(text);
