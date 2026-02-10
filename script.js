@@ -26,7 +26,8 @@ document.getElementById("submitComment").onclick = async () => {
 
   await addDoc(commentsRef, {
     text,
-    createdAt: serverTimestamp()
+    createdAt: Date.now()
+
   });
 
   document.getElementById("commentInput").value = "";
