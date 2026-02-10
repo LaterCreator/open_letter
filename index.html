@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<!-- PDF Viewer (optional) -->
-<iframe src="sym.png" style="width:100%; height:600px;" frameborder="0"></iframe>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Comments</title>
+  <title>PDF Comment Section</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Basic styling for the comment section */
+    /* Container for PDF + comments */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    #commentSection {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Comment Form */
     #commentForm {
       margin-bottom: 20px;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
     #usernameInput, #commentInput {
       width: 100%;
       padding: 8px;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -39,18 +64,31 @@
       background-color: #0056b3;
     }
 
+    /* Comments List */
+    #commentsList {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
     .comment {
       padding: 5px 0;
       border-bottom: 1px solid #eee;
     }
 
+    .comment:last-child {
+      border-bottom: none;
+    }
+
     .comment .comment-text {
       display: inline;
+      margin-right: 5px;
     }
 
     .comment .timestamp {
       display: inline;
-      margin-left: 10px;
+      margin-left: 5px;
       color: #666;
       font-size: 0.8em;
     }
@@ -59,6 +97,7 @@
       margin-left: 20px;
       border-left: 2px solid #eee;
       padding-left: 10px;
+      margin-top: 5px;
     }
 
     .reply-box {
@@ -92,18 +131,26 @@
 
   <h1>PDF Comment Section</h1>
 
-  <!-- Username + Comment Form -->
-  <div id="commentForm">
-    <input type="text" id="usernameInput" placeholder="Username (optional)">
-    <textarea id="commentInput" placeholder="Add a public comment..."></textarea>
-    <button id="submitComment">Post Comment</button>
+  <!-- PDF Viewer -->
+  <iframe src="yourfile.pdf" frameborder="0"></iframe>
+
+  <!-- Comment Section -->
+  <div id="commentSection">
+
+    <!-- Comment Form -->
+    <div id="commentForm">
+      <input type="text" id="usernameInput" placeholder="Username (optional)">
+      <textarea id="commentInput" placeholder="Add a public comment..."></textarea>
+      <button id="submitComment">Post Comment</button>
+    </div>
+
+    <!-- Comments List -->
+    <div id="commentsList">Loading comments...</div>
+
   </div>
-
-  <!-- Container for comments -->
-  <div id="commentsList">Loading comments...</div>
-
 
   <!-- JS -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
