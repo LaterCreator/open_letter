@@ -23,9 +23,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const commentsRef = collection(db, "comments");
 
-// Show a loading placeholder
 const commentsList = document.getElementById("commentsList");
-commentsList.textContent = "Loading comments...";
 
 // Post top-level comment
 document.getElementById("submitComment").onclick = async () => {
@@ -38,10 +36,8 @@ document.getElementById("submitComment").onclick = async () => {
   let username = usernameInput.value.trim();
   if (!username) username = "Anonymous";
 
-  // Render instantly
   renderTemporaryComment(text, null, username);
 
-  // Send to Firestore
   await addDoc(commentsRef, {
     text,
     parentId: null,
@@ -52,7 +48,7 @@ document.getElementById("submitComment").onclick = async () => {
   input.value = "";
 };
 
-// Listen for comments from Firestore
+// Listen for Firestore comments
 const q = query(commentsRef, orderBy("createdAt", "asc"));
 onSnapshot(q, snapshot => {
   const comments = [];
@@ -60,47 +56,38 @@ onSnapshot(q, snapshot => {
   renderComments(comments);
 });
 
-// Render all top-level comments
 function renderComments(comments) {
-  commentsList.innerHTML = ""; // Clear loading placeholder
-
+  commentsList.innerHTML = "";
   const topLevel = comments.filter(c => c.parentId === null);
   topLevel.forEach(comment => {
     commentsList.appendChild(renderCommentWithReplies(comment, comments));
   });
 }
 
-// Recursive function to render a comment + all replies
 function renderCommentWithReplies(comment, allComments) {
   const div = createCommentElement(comment);
-
   const childReplies = allComments.filter(c => c.parentId === comment.id);
   childReplies.forEach(reply => {
     const replyEl = renderCommentWithReplies(reply, allComments);
-    replyEl.classList.add("reply"); // indent styling
+    replyEl.classList.add("reply");
     div.appendChild(replyEl);
   });
-
   return div;
 }
 
-// Create a single comment element
 function createCommentElement(comment) {
   const div = document.createElement("div");
   div.classList.add("comment");
   div.dataset.id = comment.id;
 
-  // Username
   const author = document.createElement("strong");
   author.textContent = comment.username || "Anonymous";
   author.style.marginRight = "5px";
 
-  // Comment text
   const text = document.createElement("span");
   text.classList.add("comment-text");
   text.textContent = comment.text;
 
-  // Timestamp
   const time = document.createElement("span");
   time.classList.add("timestamp");
   time.textContent = formatTime(comment.createdAt);
@@ -108,15 +95,13 @@ function createCommentElement(comment) {
   time.style.color = "#666";
   time.style.fontSize = "0.8em";
 
-  // Reply button
   const replyBtn = document.createElement("button");
   replyBtn.textContent = "Reply";
   replyBtn.style.marginLeft = "10px";
 
-  // Reply box (hidden initially)
   const replyBox = document.createElement("div");
   replyBox.classList.add("reply-box");
-  replyBox.style.display = "none"; // ensures first-click works
+  replyBox.style.display = "none";
 
   const replyInput = document.createElement("textarea");
   replyInput.rows = 2;
@@ -128,15 +113,13 @@ function createCommentElement(comment) {
   replyBox.appendChild(replyInput);
   replyBox.appendChild(submitReply);
 
-  // Toggle reply box
   replyBtn.onclick = () => {
     replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
     if (replyBox.style.display === "block") {
-      setTimeout(() => replyInput.focus(), 0); // ensures focus works on first click
+      setTimeout(() => replyInput.focus(), 0);
     }
   };
 
-  // Submit reply
   submitReply.onclick = async () => {
     const replyText = replyInput.value.trim();
     if (!replyText) return;
@@ -144,10 +127,8 @@ function createCommentElement(comment) {
     let replyUsername = document.getElementById("usernameInput").value.trim();
     if (!replyUsername) replyUsername = "Anonymous";
 
-    // Render instantly
     renderTemporaryComment(replyText, comment.id, replyUsername);
 
-    // Send to Firestore
     await addDoc(commentsRef, {
       text: replyText,
       parentId: comment.id,
@@ -159,7 +140,6 @@ function createCommentElement(comment) {
     replyBox.style.display = "none";
   };
 
-  // Assemble comment
   div.appendChild(author);
   div.appendChild(text);
   div.appendChild(time);
@@ -169,7 +149,6 @@ function createCommentElement(comment) {
   return div;
 }
 
-// Render temporary comment instantly before Firestore confirms
 function renderTemporaryComment(text, parentId, username) {
   const div = document.createElement("div");
   div.classList.add("comment");
@@ -202,7 +181,6 @@ function renderTemporaryComment(text, parentId, username) {
   }
 }
 
-// Format timestamp into human-readable text
 function formatTime(timestamp) {
   if (!timestamp) return "";
   const diff = Date.now() - timestamp;
@@ -217,3 +195,4 @@ function formatTime(timestamp) {
   if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
   return `${days} day${days > 1 ? "s" : ""} ago`;
 }
+
