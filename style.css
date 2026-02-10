@@ -1,134 +1,140 @@
-/* General body */
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #f5f5f5;
-  color: #202124;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 20px;
 }
 
-/* PDF iframe */
-/* PDF iframe styling */
-iframe {
-  display: block;             /* center with margin auto */
-  margin: 0 auto 20px;        /* centered horizontally with bottom spacing */
-  width: 100%;                /* full width of container */
-  max-width: 800px;           /* maximum width to keep readability */
-  aspect-ratio: 21 / 29.7;    /* standard A4 PDF ratio for better reading */
-  
-  border: none;               /* removes grey frame */
-  border-radius: 0;           /* optional, keeps it flush */
-  background: white;          /* white background for clean contrast */
-  box-shadow: none;           /* no shadow */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-
-
-
-/* Comments section */
-#commentsSection {
-  margin-top: 30px;
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-/* New comment input */
-#newComment textarea {
+/* PDF Viewer */
+#pdfViewer {
   width: 100%;
-  padding: 10px;
-  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+canvas {
+  display: block;
+  margin: 20px auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+/* Comment Section */
+#commentSection {
+  width: 100%;
+}
+
+#commentForm {
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+#usernameInput, #commentInput {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
   border: 1px solid #ccc;
-  resize: vertical;
-  font-family: inherit;
+  border-radius: 4px;
   font-size: 14px;
 }
 
-#newComment button {
-  margin-top: 5px;
-  padding: 6px 12px;
-  background-color: #065fd4;
+#submitComment {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 3px;
-  cursor: pointer;
+  border-radius: 4px;
 }
 
-#newComment button:hover {
-  background-color: #0a78ff;
+#submitComment:hover {
+  background-color: #0056b3;
 }
 
-/* Comment container */
+/* Comments List */
 #commentsList {
-  margin-top: 20px;
-}
-
-/* Each comment box */
-.comment {
-  background: white;
-  border-radius: 5px;
+  background-color: #fff;
   padding: 10px;
-  margin-bottom: 10px;
-  position: relative;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.comment:hover {
-  background: #f9f9f9;
+.comment {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
 }
 
-/* Comment text */
-.comment-text {
-  margin: 0 0 5px 0;
-  line-height: 1.4;
+.comment:last-child {
+  border-bottom: none;
 }
 
-/* Reply button */
-.comment button {
+.comment strong {
+  margin-right: 5px;
+}
+
+.comment .timestamp {
+  font-size: 0.8em;
+  color: #666;
+  margin-left: 5px;
+}
+
+.comment .replyBtn {
+  font-size: 0.8em;
+  color: #007bff;
   background: none;
   border: none;
-  color: #065fd4;
-  font-size: 13px;
   cursor: pointer;
-  padding: 0;
-  margin-top: 5px;
+  margin-left: 10px;
 }
 
-.comment button:hover {
+.comment .replyBtn:hover {
   text-decoration: underline;
 }
 
-/* Reply box */
-.reply-box {
-  display: none;
-  margin-top: 5px;
-}
-
-.reply-box textarea {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-family: inherit;
-  font-size: 13px;
-  resize: vertical;
-}
-
-.reply-box button {
-  margin-top: 3px;
-  padding: 5px 10px;
-  background-color: #065fd4;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.reply-box button:hover {
-  background-color: #0a78ff;
-}
-
-/* Indented replies */
-.comment .reply {
+/* Reply nested comments */
+.comment .replies {
   margin-left: 20px;
+  margin-top: 8px;
   border-left: 2px solid #eee;
   padding-left: 10px;
 }
 
+.comment .reply-box {
+  margin-top: 5px;
+}
 
+.comment .reply-box textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 5px;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.comment .reply-box button {
+  padding: 4px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+}
+
+.comment .reply-box button:hover {
+  background-color: #0056b3;
+}
