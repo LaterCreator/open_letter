@@ -23,12 +23,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const commentsRef = collection(db, "comments");
 
-// Ask for username once
+// Ask for username once at page load
 let username = localStorage.getItem("username");
 if (!username) {
-  username = prompt("Enter your name:") || "Anonymous";
+  username = prompt("Enter your name (will be used for comments):") || "Anonymous";
   localStorage.setItem("username", username);
 }
+
+// Show a loading placeholder
+const commentsList = document.getElementById("commentsList");
+commentsList.textContent = "Loading comments...";
 
 // Post top-level comment
 document.getElementById("submitComment").onclick = async () => {
@@ -60,33 +64,33 @@ onSnapshot(q, snapshot => {
 
 // Render all top-level comments
 function renderComments(comments) {
-  const list = document.getElementById("commentsList");
-  list.innerHTML = "";
+  commentsList.innerHTML = ""; // Clear loading placeholder
 
   const topLevel = comments.filter(c => c.parentId === null);
   topLevel.forEach(comment => {
-    list.appendChild(renderCommentWithReplies(comment, comments));
+    commentsList.appendChild(renderCommentWithReplies(comment, comments));
   });
 }
 
-// Recursive function to render a comment + all its replies
+// Recursive function to render a comment + all replies
 function renderCommentWithReplies(comment, allComments) {
   const div = createCommentElement(comment);
 
   const childReplies = allComments.filter(c => c.parentId === comment.id);
   childReplies.forEach(reply => {
     const replyEl = renderCommentWithReplies(reply, allComments);
-    replyEl.classList.add("reply");
+    replyEl.classList.add("reply"); // indent styling
     div.appendChild(replyEl);
   });
 
   return div;
 }
 
-// Create single comment or reply element
+// Create a single comment element
 function createCommentElement(comment) {
   const div = document.createElement("div");
   div.classList.add("comment");
+  div.dataset.id = comment.id; // store id for future reference
 
   // Username
   const author = document.createElement("strong");
@@ -101,10 +105,12 @@ function createCommentElement(comment) {
   // Reply button
   const replyBtn = document.createElement("button");
   replyBtn.textContent = "Reply";
+  replyBtn.style.marginLeft = "10px";
 
-  // Reply box (hidden by default)
+  // Reply box (hidden initially)
   const replyBox = document.createElement("div");
   replyBox.classList.add("reply-box");
+  replyBox.style.display = "none"; // important for first-click
 
   const replyInput = document.createElement("textarea");
   replyInput.rows = 2;
@@ -116,11 +122,11 @@ function createCommentElement(comment) {
   replyBox.appendChild(replyInput);
   replyBox.appendChild(submitReply);
 
-  // Toggle reply box with first-click fix
+  // Toggle reply box
   replyBtn.onclick = () => {
     replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
     if (replyBox.style.display === "block") {
-      setTimeout(() => replyInput.focus(), 0); // ensures focus works
+      setTimeout(() => replyInput.focus(), 0); // ensures focus works first click
     }
   };
 
@@ -144,6 +150,7 @@ function createCommentElement(comment) {
     replyBox.style.display = "none";
   };
 
+  // Assemble comment
   div.appendChild(author);
   div.appendChild(text);
   div.appendChild(replyBtn);
@@ -171,14 +178,11 @@ function renderTemporaryComment(text, parentId, username) {
 
   if (parentId) {
     // Append under parent comment
-    const allComments = document.querySelectorAll(".comment");
-    allComments.forEach(c => {
-      const parentText = c.querySelector(".comment-text");
-      if (parentText && parentText.textContent === parentId) return; // optional check
-      if (c.dataset.id === parentId) c.appendChild(div);
-    });
+    const parentDiv = document.querySelector(`.comment[data-id='${parentId}']`);
+    if (parentDiv) parentDiv.appendChild(div);
   } else {
-    document.getElementById("commentsList").appendChild(div);
+    commentsList.appendChild(div);
   }
 }
+
 
