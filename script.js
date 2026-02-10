@@ -47,40 +47,49 @@ onSnapshot(q, snapshot => {
   renderComments(comments);
 });
 
-// Render comments and nested replies
+// Render top-level comments
 function renderComments(comments) {
   const list = document.getElementById("commentsList");
   list.innerHTML = "";
 
   const topLevel = comments.filter(c => c.parentId === null);
-  const replies = comments.filter(c => c.parentId !== null);
 
   topLevel.forEach(comment => {
-    const commentEl = createCommentElement(comment);
-
-    // Append replies
-    replies.filter(r => r.parentId === comment.id).forEach(reply => {
-      commentEl.appendChild(createCommentElement(reply, true));
-    });
-
-    list.appendChild(commentEl);
+    list.appendChild(renderCommentWithReplies(comment, comments));
   });
 }
 
-// Create comment or reply element
-function createCommentElement(comment, isReply = false) {
+// Recursive function to render comment + all nested replies
+function renderCommentWithReplies(comment, allComments) {
+  const div = createCommentElement(comment);
+
+  // Find replies to this comment
+  const childReplies = allComments.filter(c => c.parentId === comment.id);
+
+  childReplies.forEach(reply => {
+    const replyEl = renderCommentWithReplies(reply, allComments); // recursive!
+    replyEl.classList.add("reply"); // add CSS indent styling
+    div.appendChild(replyEl);
+  });
+
+  return div;
+}
+
+// Create single comment element
+function createCommentElement(comment) {
   const div = document.createElement("div");
   div.classList.add("comment");
-  if (isReply) div.classList.add("reply");
 
+  // Comment text
   const text = document.createElement("p");
   text.classList.add("comment-text");
   text.textContent = comment.text;
 
+  // Reply button
   const replyBtn = document.createElement("button");
   replyBtn.textContent = "Reply";
 
-  // Reply box (hidden)
+  // Reply box (hidden by default)
   const replyBox = document.createElement("div");
   replyBox.classList.add("reply-box");
 
@@ -94,18 +103,20 @@ function createCommentElement(comment, isReply = false) {
   replyBox.appendChild(replyInput);
   replyBox.appendChild(submitReply);
 
+  // Toggle reply box
   replyBtn.onclick = () => {
     replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
     replyInput.focus();
   };
 
+  // Submit reply
   submitReply.onclick = async () => {
     const replyText = replyInput.value.trim();
     if (!replyText) return;
 
     await addDoc(commentsRef, {
       text: replyText,
-      parentId: comment.id,
+      parentId: comment.id, // links reply to parent comment
       createdAt: Date.now()
     });
 
@@ -113,12 +124,10 @@ function createCommentElement(comment, isReply = false) {
     replyBox.style.display = "none";
   };
 
+  // Assemble
   div.appendChild(text);
   div.appendChild(replyBtn);
   div.appendChild(replyBox);
 
   return div;
 }
-
-
-
