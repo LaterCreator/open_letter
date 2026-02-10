@@ -13,7 +13,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCNnwgxQlqXPtwJSJfSffoRNbk46NcPwxw",
   authDomain: "pbus-74c6d.firebaseapp.com",
   projectId: "pbus-74c6d",
-  storageBucket: "pbus-74c6d.firebasestorage.app",
+  storageBucket: "pbus-74c6d.appspot.com",
   messagingSenderId: "377804479541",
   appId: "1:377804479541:web:bdc045940360560a2f257c"
 };
@@ -22,11 +22,15 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const commentsRef = collection(db, "comments");
 
-// Post comment
+const commentsList = document.getElementById("commentsList");
+
+// ------------------ Comments ------------------
+
 document.getElementById("submitComment").onclick = async () => {
-  const input = document.getElementById("commentInput");
+  const textInput = document.getElementById("commentInput");
   const usernameInput = document.getElementById("usernameInput");
-  const text = input.value.trim();
+
+  const text = textInput.value.trim();
   if (!text) return;
 
   const username = usernameInput.value.trim() || "Anonymous";
@@ -34,86 +38,106 @@ document.getElementById("submitComment").onclick = async () => {
   await addDoc(commentsRef, {
     text,
     parentId: null,
-    username,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    username
   });
 
-  input.value = "";
+  textInput.value = "";
 };
 
-// Listen for comments
 const q = query(commentsRef, orderBy("createdAt", "asc"));
-
-onSnapshot(q, (snapshot) => {
+onSnapshot(q, snapshot => {
   const comments = [];
   snapshot.forEach(doc => comments.push({ id: doc.id, ...doc.data() }));
   renderComments(comments);
 });
 
 function renderComments(comments) {
-  const list = document.getElementById("commentsList");
-  list.innerHTML = "";
-
+  commentsList.innerHTML = "";
   const topLevel = comments.filter(c => c.parentId === null);
-  const replies = comments.filter(c => c.parentId !== null);
-
   topLevel.forEach(comment => {
-    const li = createCommentElement(comment);
-
-    replies
-      .filter(r => r.parentId === comment.id)
-      .forEach(reply => li.appendChild(createCommentElement(reply, true)));
-
-    list.appendChild(li);
+    commentsList.appendChild(renderComment(comment, comments));
   });
 }
 
-function createCommentElement(comment, isReply = false) {
+function renderComment(comment, allComments) {
   const div = document.createElement("div");
-  div.style.marginLeft = isReply ? "20px" : "0";
-  div.style.borderLeft = isReply ? "2px solid #ccc" : "none";
-  div.style.padding = "5px";
+  div.classList.add("comment");
+  div.dataset.id = comment.id;
 
-  const user = document.createElement("strong");
-  user.textContent = comment.username + " ";
-  const timestamp = document.createElement("span");
-  timestamp.style.fontSize = "0.8em";
-  timestamp.style.color = "#555";
-  timestamp.textContent = new Date(comment.createdAt).toLocaleString();
+  const author = document.createElement("strong");
+  author.textContent = comment.username;
 
-  const text = document.createElement("p");
+  const time = document.createElement("span");
+  time.classList.add("timestamp");
+  time.textContent = new Date(comment.createdAt).toLocaleString();
+
+  const text = document.createElement("span");
   text.textContent = comment.text;
 
   const replyBtn = document.createElement("button");
   replyBtn.textContent = "Reply";
-  replyBtn.style.fontSize = "0.8em";
-  replyBtn.onclick = async () => {
-    const replyText = prompt("Reply:");
+  replyBtn.classList.add("replyBtn");
+
+  const replyBox = document.createElement("div");
+  replyBox.classList.add("reply-box");
+  replyBox.style.display = "none";
+
+  const replyInput = document.createElement("textarea");
+  replyInput.rows = 2;
+  replyInput.placeholder = "Write a reply...";
+
+  const submitReply = document.createElement("button");
+  submitReply.textContent = "Post Reply";
+
+  replyBox.appendChild(replyInput);
+  replyBox.appendChild(submitReply);
+
+  replyBtn.onclick = () => {
+    replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+    if (replyBox.style.display === "block") replyInput.focus();
+  };
+
+  submitReply.onclick = async () => {
+    const replyText = replyInput.value.trim();
     if (!replyText) return;
 
-    const usernameInput = document.getElementById("usernameInput");
-    const username = usernameInput.value.trim() || "Anonymous";
+    const username = document.getElementById("usernameInput").value.trim() || "Anonymous";
 
     await addDoc(commentsRef, {
       text: replyText,
       parentId: comment.id,
-      username,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      username
     });
+
+    replyInput.value = "";
+    replyBox.style.display = "none";
   };
 
-  div.appendChild(user);
-  div.appendChild(timestamp);
+  div.appendChild(author);
+  div.appendChild(time);
+  div.appendChild(document.createElement("br"));
   div.appendChild(text);
   div.appendChild(replyBtn);
+  div.appendChild(replyBox);
+
+  // Render child replies
+  const childReplies = allComments.filter(c => c.parentId === comment.id);
+  if (childReplies.length > 0) {
+    const repliesDiv = document.createElement("div");
+    repliesDiv.classList.add("replies");
+    childReplies.forEach(reply => repliesDiv.appendChild(renderComment(reply, allComments)));
+    div.appendChild(repliesDiv);
+  }
 
   return div;
 }
 
-// ================= PDF.js viewer =================
-const url = "yourfile.pdf"; // path to your PDF
-const container = document.getElementById("pdfViewer");
+// ------------------ PDF.js ------------------
 
+const url = "pdfs/story-dad.pdf"; // PDF in /pdfs folder
+const container = document.getElementById("pdfViewer");
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.worker.min.js';
 
 async function renderPDF() {
@@ -127,15 +151,10 @@ async function renderPDF() {
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
-    canvas.style.display = "block";
-    canvas.style.margin = "20px auto";
 
     await page.render({ canvasContext: context, viewport }).promise;
-
     container.appendChild(canvas);
   }
 }
 
 renderPDF();
-
-
