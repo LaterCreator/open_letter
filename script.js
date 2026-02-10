@@ -23,94 +23,78 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const commentsRef = collection(db, "comments");
 
+// Ask for username once
+let username = localStorage.getItem("username");
+if (!username) {
+  username = prompt("Enter your name:") || "Anonymous";
+  localStorage.setItem("username", username);
+}
+
 // Post top-level comment
 document.getElementById("submitComment").onclick = async () => {
   const input = document.getElementById("commentInput");
   const text = input.value.trim();
   if (!text) return;
 
-  // 1️⃣ Render instantly
-  renderTemporaryComment(text, null);
+  // Render instantly
+  renderTemporaryComment(text, null, username);
 
-  // 2️⃣ Send to Firestore
+  // Send to Firestore
   await addDoc(commentsRef, {
     text,
     parentId: null,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    username: username
   });
 
   input.value = "";
 };
 
-// Render temporary comment
-function renderTemporaryComment(text, parentId) {
-  const div = document.createElement("div");
-  div.classList.add("comment");
-  if (parentId) div.classList.add("reply");
-
-  const p = document.createElement("p");
-  p.classList.add("comment-text");
-  p.textContent = text;
-
-  div.appendChild(p);
-
-  // Insert it in the right place
-  if (parentId) {
-    // Find parent comment div
-    const allComments = document.querySelectorAll(".comment");
-    allComments.forEach(c => {
-      if (c.dataset.id === parentId) {
-        c.appendChild(div);
-      }
-    });
-  } else {
-    document.getElementById("commentsList").appendChild(div);
-  }
-}
-// Listen for comments
+// Listen for comments from Firestore
 const q = query(commentsRef, orderBy("createdAt", "asc"));
-
 onSnapshot(q, snapshot => {
   const comments = [];
   snapshot.forEach(doc => comments.push({ id: doc.id, ...doc.data() }));
   renderComments(comments);
 });
 
-// Render top-level comments
+// Render all top-level comments
 function renderComments(comments) {
   const list = document.getElementById("commentsList");
   list.innerHTML = "";
 
   const topLevel = comments.filter(c => c.parentId === null);
-
   topLevel.forEach(comment => {
     list.appendChild(renderCommentWithReplies(comment, comments));
   });
 }
 
-// Recursive function to render comment + all nested replies
+// Recursive function to render a comment + all its replies
 function renderCommentWithReplies(comment, allComments) {
   const div = createCommentElement(comment);
 
-  // Find replies to this comment
   const childReplies = allComments.filter(c => c.parentId === comment.id);
-
   childReplies.forEach(reply => {
-    const replyEl = renderCommentWithReplies(reply, allComments); // recursive!
-    replyEl.classList.add("reply"); // add CSS indent styling
+    const replyEl = renderCommentWithReplies(reply, allComments);
+    replyEl.classList.add("reply");
     div.appendChild(replyEl);
   });
 
   return div;
 }
 
-// Create single comment element
+// Create single comment or reply element
 function createCommentElement(comment) {
   const div = document.createElement("div");
   div.classList.add("comment");
 
+  // Username
+  const author = document.createElement("strong");
+  author.textContent = comment.username || "Anonymous";
+  author.style.marginRight = "5px";
+
   // Comment text
-  const text = document.createElement("p");
+  const text = document.createElement("span");
   text.classList.add("comment-text");
   text.textContent = comment.text;
 
@@ -132,40 +116,69 @@ function createCommentElement(comment) {
   replyBox.appendChild(replyInput);
   replyBox.appendChild(submitReply);
 
-  // Toggle reply box
+  // Toggle reply box with first-click fix
   replyBtn.onclick = () => {
-  replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
-
-  // Focus textarea after rendering
-  if (replyBox.style.display === "block") {
-    setTimeout(() => replyInput.focus(), 0);
-  }
-};
+    replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+    if (replyBox.style.display === "block") {
+      setTimeout(() => replyInput.focus(), 0); // ensures focus works
+    }
+  };
 
   // Submit reply
- submitReply.onclick = async () => {
-  const replyText = replyInput.value.trim();
-  if (!replyText) return;
+  submitReply.onclick = async () => {
+    const replyText = replyInput.value.trim();
+    if (!replyText) return;
 
-  // 1️⃣ Render instantly
-  renderTemporaryComment(replyText, comment.id);
+    // Render instantly
+    renderTemporaryComment(replyText, comment.id, username);
 
-  // 2️⃣ Send to Firestore
-  await addDoc(commentsRef, {
-    text: replyText,
-    parentId: comment.id,
-    createdAt: Date.now()
-  });
+    // Send to Firestore
+    await addDoc(commentsRef, {
+      text: replyText,
+      parentId: comment.id,
+      createdAt: Date.now(),
+      username: username
+    });
 
-  replyInput.value = "";
-  replyBox.style.display = "none";
-};
+    replyInput.value = "";
+    replyBox.style.display = "none";
+  };
 
-
-  // Assemble
+  div.appendChild(author);
   div.appendChild(text);
   div.appendChild(replyBtn);
   div.appendChild(replyBox);
 
   return div;
 }
+
+// Render temporary comment instantly before Firestore confirms
+function renderTemporaryComment(text, parentId, username) {
+  const div = document.createElement("div");
+  div.classList.add("comment");
+  if (parentId) div.classList.add("reply");
+
+  const author = document.createElement("strong");
+  author.textContent = username || "Anonymous";
+  author.style.marginRight = "5px";
+
+  const p = document.createElement("span");
+  p.classList.add("comment-text");
+  p.textContent = text;
+
+  div.appendChild(author);
+  div.appendChild(p);
+
+  if (parentId) {
+    // Append under parent comment
+    const allComments = document.querySelectorAll(".comment");
+    allComments.forEach(c => {
+      const parentText = c.querySelector(".comment-text");
+      if (parentText && parentText.textContent === parentId) return; // optional check
+      if (c.dataset.id === parentId) c.appendChild(div);
+    });
+  } else {
+    document.getElementById("commentsList").appendChild(div);
+  }
+}
+
