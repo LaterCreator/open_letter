@@ -1,23 +1,25 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } 
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInAnonymously } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// 🔥 Your Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  storageBucket: "PASTE_HERE",
+  messagingSenderId: "PASTE_HERE",
+  appId: "PASTE_HERE"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
-signInAnonymously(auth);
-
+// Firestore collection
 const commentsRef = collection(db, "comments");
 
+// Post comment
 document.getElementById("submitComment").onclick = async () => {
   const text = document.getElementById("commentInput").value;
   if (!text.trim()) return;
@@ -30,6 +32,7 @@ document.getElementById("submitComment").onclick = async () => {
   document.getElementById("commentInput").value = "";
 };
 
+// Live comments
 const q = query(commentsRef, orderBy("createdAt", "desc"));
 
 onSnapshot(q, (snapshot) => {
@@ -42,3 +45,4 @@ onSnapshot(q, (snapshot) => {
     list.appendChild(li);
   });
 });
+
