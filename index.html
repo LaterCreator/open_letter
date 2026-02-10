@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pdf comment section</title>
+  <title>PDF Comment Section</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.min.js"></script>
 </head>
@@ -11,9 +11,11 @@
   <div class="container">
     <h1>PBU Open Letter</h1>
 
-     <div id="pdfViewer"></div>
+    <!-- PDF Viewer -->
+    <div id="pdfViewer"></div>
+
     <!-- Comment Section -->
-    <div id="commentSection">
+    <div id="commentSection" style="display: none;">
       <div id="commentForm">
         <input type="text" id="usernameInput" placeholder="Username (optional)">
         <textarea id="commentInput" placeholder="Add a public comment..."></textarea>
