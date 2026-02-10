@@ -134,9 +134,13 @@ function createCommentElement(comment) {
 
   // Toggle reply box
   replyBtn.onclick = () => {
-    replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
-    replyInput.focus();
-  };
+  replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+
+  // Focus textarea after rendering
+  if (replyBox.style.display === "block") {
+    setTimeout(() => replyInput.focus(), 0);
+  }
+};
 
   // Submit reply
  submitReply.onclick = async () => {
