@@ -8,9 +8,15 @@ body {
 
 /* PDF iframe */
 iframe {
+  display: block;          /* allows margin auto to work */
+  margin: 0 auto 20px;     /* top/bottom 0, left/right auto, plus bottom spacing */
+  max-width: 800px;        /* optional: keeps PDF from stretching too wide */
+  width: 100%;
+  height: 600px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 4px;
 }
+
 
 /* Comments section */
 #commentsSection {
