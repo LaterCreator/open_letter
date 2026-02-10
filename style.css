@@ -73,8 +73,9 @@ canvas {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+/* Top-level comment */
 .comment {
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
 }
 
@@ -82,37 +83,51 @@ canvas {
   border-bottom: none;
 }
 
+/* Username + timestamp */
 .comment strong {
   margin-right: 5px;
+  font-size: 14px;
 }
 
 .comment .timestamp {
-  font-size: 0.8em;
+  font-size: 12px;
   color: #666;
   margin-left: 5px;
 }
 
+/* Reply button styling */
 .comment .replyBtn {
-  font-size: 0.8em;
+  font-size: 12px;
   color: #007bff;
   background: none;
   border: none;
   cursor: pointer;
   margin-left: 10px;
+  padding: 0;
 }
 
 .comment .replyBtn:hover {
   text-decoration: underline;
 }
 
-/* Reply nested comments */
+/* Nested replies */
 .comment .replies {
-  margin-left: 20px;
+  margin-left: 15px;
   margin-top: 8px;
-  border-left: 2px solid #eee;
-  padding-left: 10px;
+  border-left: none;
+  padding-left: 0;
 }
 
+/* Individual reply styling */
+.comment .reply {
+  background-color: #f1f3f4;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+/* Reply box */
 .comment .reply-box {
   margin-top: 5px;
 }
@@ -123,6 +138,8 @@ canvas {
   padding: 5px;
   font-size: 13px;
   margin-bottom: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
 .comment .reply-box button {
