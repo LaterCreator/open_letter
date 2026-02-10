@@ -76,15 +76,41 @@ function createCommentElement(comment, isReply = false) {
   div.style.borderLeft = isReply ? "2px solid #ccc" : "none";
   div.style.padding = "5px";
 
+  // Comment text
   const text = document.createElement("p");
   text.textContent = comment.text;
 
+  // Reply button
   const replyBtn = document.createElement("button");
   replyBtn.textContent = "Reply";
   replyBtn.style.fontSize = "0.8em";
+  replyBtn.style.marginTop = "5px";
 
-  replyBtn.onclick = async () => {
-    const replyText = prompt("Reply:");
+  // Reply input (hidden by default)
+  const replyDiv = document.createElement("div");
+  replyDiv.style.display = "none";
+  replyDiv.style.marginTop = "5px";
+
+  const replyInput = document.createElement("textarea");
+  replyInput.rows = 2;
+  replyInput.cols = 40;
+  replyInput.placeholder = "Write a reply...";
+
+  const submitReply = document.createElement("button");
+  submitReply.textContent = "Post Reply";
+
+  replyDiv.appendChild(replyInput);
+  replyDiv.appendChild(submitReply);
+
+  // Show reply input when button clicked
+  replyBtn.onclick = () => {
+    replyDiv.style.display = replyDiv.style.display === "none" ? "block" : "none";
+    replyInput.focus();
+  };
+
+  // Submit reply
+  submitReply.onclick = async () => {
+    const replyText = replyInput.value.trim();
     if (!replyText) return;
 
     await addDoc(commentsRef, {
@@ -92,10 +118,14 @@ function createCommentElement(comment, isReply = false) {
       parentId: comment.id,
       createdAt: Date.now()
     });
+
+    replyInput.value = "";
+    replyDiv.style.display = "none";
   };
 
   div.appendChild(text);
   div.appendChild(replyBtn);
+  div.appendChild(replyDiv);
 
   return div;
 }
