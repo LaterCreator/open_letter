@@ -23,13 +23,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const commentsRef = collection(db, "comments");
 
-// Ask for username once at page load
-let username = localStorage.getItem("username");
-if (!username) {
-  username = prompt("Enter your name (will be used for comments):") || "Anonymous";
-  localStorage.setItem("username", username);
-}
-
 // Show a loading placeholder
 const commentsList = document.getElementById("commentsList");
 commentsList.textContent = "Loading comments...";
@@ -37,8 +30,13 @@ commentsList.textContent = "Loading comments...";
 // Post top-level comment
 document.getElementById("submitComment").onclick = async () => {
   const input = document.getElementById("commentInput");
+  const usernameInput = document.getElementById("usernameInput");
+
   const text = input.value.trim();
   if (!text) return;
+
+  let username = usernameInput.value.trim();
+  if (!username) username = "Anonymous";
 
   // Render instantly
   renderTemporaryComment(text, null, username);
@@ -90,7 +88,7 @@ function renderCommentWithReplies(comment, allComments) {
 function createCommentElement(comment) {
   const div = document.createElement("div");
   div.classList.add("comment");
-  div.dataset.id = comment.id; // store id for future reference
+  div.dataset.id = comment.id;
 
   // Username
   const author = document.createElement("strong");
@@ -102,6 +100,14 @@ function createCommentElement(comment) {
   text.classList.add("comment-text");
   text.textContent = comment.text;
 
+  // Timestamp
+  const time = document.createElement("span");
+  time.classList.add("timestamp");
+  time.textContent = formatTime(comment.createdAt);
+  time.style.marginLeft = "10px";
+  time.style.color = "#666";
+  time.style.fontSize = "0.8em";
+
   // Reply button
   const replyBtn = document.createElement("button");
   replyBtn.textContent = "Reply";
@@ -110,7 +116,7 @@ function createCommentElement(comment) {
   // Reply box (hidden initially)
   const replyBox = document.createElement("div");
   replyBox.classList.add("reply-box");
-  replyBox.style.display = "none"; // important for first-click
+  replyBox.style.display = "none"; // ensures first-click works
 
   const replyInput = document.createElement("textarea");
   replyInput.rows = 2;
@@ -126,7 +132,7 @@ function createCommentElement(comment) {
   replyBtn.onclick = () => {
     replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
     if (replyBox.style.display === "block") {
-      setTimeout(() => replyInput.focus(), 0); // ensures focus works first click
+      setTimeout(() => replyInput.focus(), 0); // ensures focus works on first click
     }
   };
 
@@ -135,15 +141,18 @@ function createCommentElement(comment) {
     const replyText = replyInput.value.trim();
     if (!replyText) return;
 
+    let replyUsername = document.getElementById("usernameInput").value.trim();
+    if (!replyUsername) replyUsername = "Anonymous";
+
     // Render instantly
-    renderTemporaryComment(replyText, comment.id, username);
+    renderTemporaryComment(replyText, comment.id, replyUsername);
 
     // Send to Firestore
     await addDoc(commentsRef, {
       text: replyText,
       parentId: comment.id,
       createdAt: Date.now(),
-      username: username
+      username: replyUsername
     });
 
     replyInput.value = "";
@@ -153,6 +162,7 @@ function createCommentElement(comment) {
   // Assemble comment
   div.appendChild(author);
   div.appendChild(text);
+  div.appendChild(time);
   div.appendChild(replyBtn);
   div.appendChild(replyBox);
 
@@ -173,11 +183,18 @@ function renderTemporaryComment(text, parentId, username) {
   p.classList.add("comment-text");
   p.textContent = text;
 
+  const time = document.createElement("span");
+  time.classList.add("timestamp");
+  time.textContent = "just now";
+  time.style.marginLeft = "10px";
+  time.style.color = "#666";
+  time.style.fontSize = "0.8em";
+
   div.appendChild(author);
   div.appendChild(p);
+  div.appendChild(time);
 
   if (parentId) {
-    // Append under parent comment
     const parentDiv = document.querySelector(`.comment[data-id='${parentId}']`);
     if (parentDiv) parentDiv.appendChild(div);
   } else {
@@ -185,4 +202,18 @@ function renderTemporaryComment(text, parentId, username) {
   }
 }
 
+// Format timestamp into human-readable text
+function formatTime(timestamp) {
+  if (!timestamp) return "";
+  const diff = Date.now() - timestamp;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
 
+  if (seconds < 10) return "just now";
+  if (seconds < 60) return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+}
