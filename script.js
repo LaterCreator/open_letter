@@ -137,7 +137,7 @@ function renderComment(comment, allComments) {
 
 // ------------------ PDF.js ------------------
 
-const url = "pdfs/story-dad.pdf"; // PDF in /pdfs folder
+const url = "story dad.pdf"; 
 const container = document.getElementById("pdfViewer");
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.worker.min.js';
 
