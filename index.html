@@ -5,156 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Comment Section</title>
   <link rel="stylesheet" href="style.css">
-  <!-- PDF.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.min.js"></script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f9f9f9;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    /* PDF container */
-    #pdfViewer {
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto 30px auto;
-    }
-
-    canvas {
-      display: block;
-      margin: 20px auto;
-      border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    /* Comment Section */
-    #commentSection {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    #commentForm {
-      margin-bottom: 20px;
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    #usernameInput, #commentInput {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    #submitComment {
-      padding: 8px 12px;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-    }
-
-    #submitComment:hover {
-      background-color: #0056b3;
-    }
-
-    #commentsList {
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .comment {
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .comment:last-child {
-      border-bottom: none;
-    }
-
-    .comment strong {
-      margin-right: 5px;
-    }
-
-    .timestamp {
-      color: #666;
-      font-size: 0.8em;
-      margin-left: 5px;
-    }
-
-    .reply {
-      margin-left: 20px;
-      border-left: 2px solid #eee;
-      padding-left: 10px;
-      margin-top: 5px;
-    }
-
-    .reply-box {
-      margin-top: 5px;
-    }
-
-    .reply-box textarea {
-      width: 100%;
-      resize: vertical;
-      padding: 5px;
-      font-size: 13px;
-      margin-bottom: 5px;
-    }
-
-    .reply-box button {
-      padding: 4px 8px;
-      font-size: 13px;
-      cursor: pointer;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 3px;
-    }
-
-    .reply-box button:hover {
-      background-color: #0056b3;
-    }
-  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>PDF Comment Section</h1>
 
-  <h1>PDF Comment Section</h1>
+    <!-- PDF Viewer -->
+    <div id="pdfViewer">Loading PDF...</div>
 
-  <!-- PDF.js viewer -->
-  <div id="pdfViewer">Loading PDF...</div>
+    <!-- Comment Section -->
+    <div id="commentSection">
+      <div id="commentForm">
+        <input type="text" id="usernameInput" placeholder="Username (optional)">
+        <textarea id="commentInput" placeholder="Add a public comment..."></textarea>
+        <button id="submitComment">Post Comment</button>
+      </div>
 
-  <!-- Comment Section -->
-  <div id="commentSection">
-
-    <div id="commentForm">
-      <input type="text" id="usernameInput" placeholder="Username (optional)">
-      <textarea id="commentInput" placeholder="Add a public comment..."></textarea>
-      <button id="submitComment">Post Comment</button>
+      <div id="commentsList">Loading comments...</div>
     </div>
-
-    <div id="commentsList">Loading comments...</div>
-
   </div>
 
-  <!-- JS -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
