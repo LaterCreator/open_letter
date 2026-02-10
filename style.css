@@ -7,18 +7,20 @@ body {
 }
 
 /* PDF iframe */
+/* PDF iframe styling */
 iframe {
-  display: block;
-  margin: 0 auto 20px;
-  max-width: 800px;
-  width: 100%;
-  height: 600px;
+  display: block;             /* center with margin auto */
+  margin: 0 auto 20px;        /* centered horizontally with bottom spacing */
+  width: 100%;                /* full width of container */
+  max-width: 800px;           /* maximum width to keep readability */
+  aspect-ratio: 21 / 29.7;    /* standard A4 PDF ratio for better reading */
   
-  border: none;              /* removes the grey border */
-  border-radius: 0;          /* optional: remove rounded corners if desired */
-  background: white;         /* ensures the background is white */
-  box-shadow: none;          /* remove any shadows */
+  border: none;               /* removes grey frame */
+  border-radius: 0;           /* optional, keeps it flush */
+  background: white;          /* white background for clean contrast */
+  box-shadow: none;           /* no shadow */
 }
+
 
 
 
