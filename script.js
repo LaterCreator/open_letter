@@ -23,7 +23,7 @@ const db = getFirestore(app);
 const commentsRef = collection(db, "comments");
 
 // ---------------- PDF.js Rendering ----------------
-const pdfUrl = "pdfs/story-dad.pdf";  // PDF location
+const pdfUrl = "story dad.pdf";  // PDF location
 const container = document.getElementById("pdfViewer");
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.worker.min.js';
