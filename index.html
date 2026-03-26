@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PBU Open Letter</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>PBU Open letter</h1>
-    <!-- PDF Viewer -->
-    <div id="pdfViewer"></div>
-    <!-- Comment section will be dynamically added here after PDF loads -->
+
+    <div class="tabs">
+      <button class="tab-button active" data-tab="pdfTab">PDF</button>
+      <button class="tab-button" data-tab="commentsTab">Comments</button>
+    </div>
+
+    <div id="pdfTab" class="tab-content">
+      <div id="pdfViewer"></div>
+    </div>
+
+    <div id="commentsTab" class="tab-content" style="display:none;">
+      <!-- Comment section will be dynamically added here -->
+    </div>
   </div>
 
   <script type="module" src="script.js"></script>
