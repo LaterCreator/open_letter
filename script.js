@@ -33,7 +33,7 @@ async function renderPDF() {
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page = await pdf.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1.2 });
+    const viewport = page.getViewport({ scale: 1.5 }); // increased scale for better text quality
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
@@ -50,6 +50,22 @@ async function renderPDF() {
 
 renderPDF();
 
+// ---------------- Tabs ----------------
+document.addEventListener("DOMContentLoaded", () => {
+  const tabButtons = document.querySelectorAll(".tab-button");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      tabButtons.forEach(btn => btn.classList.remove("active"));
+      tabContents.forEach(content => content.style.display = "none");
+
+      button.classList.add("active");
+      document.getElementById(button.dataset.tab).style.display = "block";
+    });
+  });
+});
+
 // ---------------- Comment Section ----------------
 function createCommentSection() {
   const commentSection = document.createElement('div');
@@ -63,14 +79,28 @@ function createCommentSection() {
     <div id="commentsList">Loading comments...</div>
   `;
 
-  document.querySelector('.container').appendChild(commentSection);
+  document.getElementById("commentsTab").appendChild(commentSection);
 
   const commentsList = document.getElementById("commentsList");
+
+  const bannedWords = ["spamword1", "spamword2"]; // Add your banned words here
+
+  function containsBannedWords(text) {
+    const lowerText = text.toLowerCase();
+    return bannedWords.some(word => lowerText.includes(word));
+  }
 
   // Submit top-level comment
   document.getElementById("submitComment").onclick = async () => {
     const text = document.getElementById("commentInput").value.trim();
-    if (!text) return;
+    if (text.length < 5) {
+      alert("Comment is too short.");
+      return;
+    }
+    if (containsBannedWords(text)) {
+      alert("Your comment contains inappropriate content.");
+      return;
+    }
 
     const username = document.getElementById("usernameInput").value.trim() || "Anonymous";
 
@@ -139,7 +169,14 @@ function renderComment(comment, allComments) {
 
   submitReply.onclick = async () => {
     const replyText = replyInput.value.trim();
-    if (!replyText) return;
+    if (replyText.length < 3) {
+      alert("Reply is too short.");
+      return;
+    }
+    if (containsBannedWords(replyText)) {
+      alert("Your reply contains inappropriate content.");
+      return;
+    }
 
     const username = document.getElementById("usernameInput").value.trim() || "Anonymous";
 
