@@ -33,7 +33,7 @@ async function renderPDF() {
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page = await pdf.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1.5 }); // increased scale for better text quality
+    const viewport = page.getViewport({ scale: 2.5 });
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
